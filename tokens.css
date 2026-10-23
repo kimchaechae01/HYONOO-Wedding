@@ -1,0 +1,80 @@
+/* Hallmark · tokens · studied-DNA (source: image — 시퀀스 1–5 · 6_1 · 6_2 · 컬러팔레트 · 바이브1–2)
+ * Every colour on the page is one of the five swatches below. Shadows, grain and
+ * creases are the ink swatch at partial alpha — no other hue exists.
+ */
+:root {
+  /* ── Palette (컬러팔레트.jpeg — exact hex, the brief overrides OKLCH authoring) ── */
+  --palette-dark-chocolate: #37261A; /* oklch(28.6% 0.033 56.2) */
+  --palette-marlborough:    #8AA2BA; /* oklch(70.2% 0.044 248.5) */
+  --palette-khadi:          #DED9D0; /* oklch(88.7% 0.013 82.4) */
+  --palette-blackout:       #1E1E1E; /* oklch(23.5% 0 0) */
+  --palette-bronco:         #AAA194; /* oklch(71.3% 0.021 77.3) */
+
+  /* ── Colour roles ── */
+  --color-surround: var(--palette-blackout);       /* everything past the phone column */
+  --color-paper:    var(--palette-khadi);          /* stage, illustration card, calendar */
+  --color-kraft:    var(--palette-bronco);         /* the envelope */
+  --color-ink:      var(--palette-dark-chocolate); /* type, illustration lines, grid */
+  --color-mark:     var(--palette-marlborough);    /* the 16th — and nowhere else */
+  --color-doodle:   var(--palette-khadi);          /* light scribbles on the marked cell */
+
+  /* Translucency rule: a palette swatch at partial alpha, never a new colour.
+     Written as rgb() of the swatch (not color-mix) so iOS 15 keeps its shadows. */
+  --color-shadow-hard: rgb(55 38 26 / 0.52);   /* dark chocolate 52% */
+  --color-shadow-soft: rgb(55 38 26 / 0.24);   /* dark chocolate 24% */
+  --color-crease:      rgb(55 38 26 / 0.16);   /* dark chocolate 16% */
+  --color-inside:      rgb(55 38 26 / 0.12);   /* dark chocolate 12% */
+  --color-catchlight:  rgb(222 217 208 / 0.22); /* khadi 22% */
+
+  /* ── Type (2 + 1) ── */
+  --font-script: "Pinyon Script", "Snell Roundhand", cursive;       /* Hyo&Noo · Wedding Day */
+  --font-serif:  "Bodoni Moda", "Didot", "Bodoni 72", serif;        /* coming soon… · calendar */
+  --font-hand:   "Waiting for the Sunrise", "Bradley Hand", cursive; /* save the date — one slot */
+
+  /* ── Stage: the phone column. Plain viewport units, so no container queries are needed. ── */
+  --W: min(100vw, 430px);
+  --H: min(100vh, 932px);
+
+  /* ── Proportions (measured from the reference frames) ── */
+  --ratio-envelope: 0.7273;   /* 11:8 — height / width */
+  --flap-depth: 0.88;         /* flap reaches 88% of the envelope's height */
+  --card-short: 0.7055;       /* card = 97% of the envelope, turned 8:11 */
+  --card-long: 0.97;
+  --shadow-offset: 0.056;     /* hard shadow, × envelope width */
+  --envelope-y: calc(var(--H) * 0.53); /* envelope centre — a touch below the middle */
+  --cal-tilt: -14deg;                  /* 6_2 grid angle */
+  --cal-card: 0.67;                    /* calendar width ÷ envelope width — fits in the envelope behind card 1 */
+  --cal-cell: calc(var(--W) * 0.53);   /* 6_2 cell width at full zoom */
+
+  /* ── Motion ── */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-zoom:   cubic-bezier(0.7, 0, 0.18, 1);
+  --ease-pen:    cubic-bezier(0.4, 0, 0.6, 1);   /* a hand drawing at an even pace */
+
+  /* Beats — when each step begins (the brief's timing) */
+  --beat-open:  500ms;   /* 1 holds 0.5s, then the flap lifts      */
+  --beat-lift:  1500ms;  /* 3 reached at 1.5s; the card comes out  */
+  --beat-cover: 2500ms;  /* 4 gets 1s; hard cut — calendar on top  */
+  --beat-zoom:  3500ms;  /* 5 gets 1s; the 16th fills the screen   */
+  --beat-loop:  7500ms;  /* 6 holds 3s after the zoom, then repeat */
+
+  /* Moves — how long each one takes */
+  --dur-flap:     550ms;
+  --dur-peek:     550ms;  /* ends exactly on --beat-lift */
+  --dur-lift:     360ms;
+  --dur-turn:     520ms;
+  --dur-zoom:     1000ms;
+  --dur-underline: 420ms; /* after the zoom: underline "date"…        */
+  --pen-lift:      90ms;  /* …lift the pen…                            */
+  --dur-star:      480ms; /* …and draw a one-stroke star beside it      */
+  --dur-dissolve: 450ms;
+  --dur-reveal:   300ms;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --H: min(100dvh, 932px);
+  }
+}

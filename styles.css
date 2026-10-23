@@ -1,0 +1,425 @@
+/* Hallmark · route: custom (bespoke) · structure: single-scene envelope reel · idea: "the envelope opens and the 16th fills the screen"
+ * theme: studied-DNA (source: image — 시퀀스 1–5 · 6_1 · 6_2) · studied: yes
+ * paper: #DED9D0 khadi · accent: #8AA2BA marlborough (the 16th only) · display: Pinyon Script · body: Bodoni Moda · outlier: Waiting for the Sunrise
+ * axes: light / ornamental-script / cool · nav: none · footer: none
+ * contrast: pass (40–41) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · mobile: pass (34, 49–57)
+ * brief overrides kept: centred scene (6) · 16th fills ~15% at full zoom (23) · blackout is the palette's own neutral (22) · reel loops
+ */
+/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V5 */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overflow: clip;
+  background: var(--color-surround);
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Stage: the phone column. Everything inside is sized from --W / --H. ── */
+.stage {
+  --env-w: min(calc(var(--W) * 0.66), calc(var(--H) * 0.47));
+  --env-h: calc(var(--env-w) * var(--ratio-envelope));
+  --persp: calc(var(--env-w) * 2.6);
+  --u: var(--cal-cell);
+
+  position: relative;
+  width: var(--W);
+  height: var(--H);
+  overflow: hidden;
+  color: var(--color-ink);
+  background: var(--color-paper) url("assets/grain.png") 0 0 / 128px 128px;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transition: opacity var(--dur-reveal) var(--ease-out);
+}
+
+.caption {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(var(--envelope-y) + var(--env-h) / 2 + var(--env-w) * (var(--shadow-offset) + 0.07));
+  z-index: 0;
+  margin: 0;
+  font: 400 calc(var(--env-w) * 0.115) / 1.2 var(--font-serif);
+  letter-spacing: 0.005em;
+  text-align: center;
+  transition: opacity var(--dur-reveal) var(--ease-out);
+}
+
+/* With JS, hold the first frame until the faces are in; without it, the closed envelope just shows. */
+.js .scene,
+.js .caption {
+  opacity: 0;
+}
+
+.js .stage.is-ready .scene,
+.js .stage.is-ready .caption {
+  opacity: 1;
+}
+
+/* ── SVG paint roles ── */
+.kraft { fill: var(--color-kraft); }
+.inside { fill: var(--color-inside); }
+.catchlight { fill: var(--color-catchlight); }
+.paper { fill: var(--color-paper); }
+.flap-shadow { fill: var(--color-crease); }
+
+.crease {
+  fill: none;
+  stroke: var(--color-crease);
+  stroke-width: 4;
+}
+
+/* ── Envelope (11:8). No z-index here, so its parts layer with the card. ── */
+.envelope {
+  position: absolute;
+  width: var(--env-w);
+  height: var(--env-h);
+  left: calc(var(--W) / 2 - var(--env-w) / 2);
+  top: calc(var(--envelope-y) - var(--env-h) / 2);
+}
+
+.envelope > * {
+  position: absolute;
+  display: block;
+}
+
+.envelope__shadow {
+  inset: 0;
+  z-index: 1;
+  border-radius: calc(var(--env-w) * 0.006);
+  background: var(--color-shadow-hard);
+  transform: translate(calc(var(--env-w) * var(--shadow-offset)), calc(var(--env-w) * var(--shadow-offset)));
+}
+
+.envelope__back,
+.envelope__pocket {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.envelope__back { z-index: 2; }
+.envelope__pocket { z-index: 6; }
+
+.flap {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--env-h) * var(--flap-depth));
+  z-index: 9;
+  transform-origin: 50% 0;
+  transform-style: preserve-3d;
+  transform: perspective(var(--persp)) rotateX(0deg);
+}
+
+.flap__face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flap__face--inner {
+  transform: rotateY(180deg);
+}
+
+/* ── Card 1: the illustration, upright when it stands (8:11) ── */
+.card {
+  position: absolute;
+  width: calc(var(--env-w) * var(--card-short));
+  height: calc(var(--env-w) * var(--card-long));
+  left: calc(var(--W) / 2 - var(--env-w) * var(--card-short) / 2);
+  top: calc(var(--envelope-y) - var(--env-w) * var(--card-long) / 2);
+  z-index: 5;
+  overflow: visible;
+  filter: drop-shadow(0 0 calc(var(--env-w) * 0.016) var(--color-shadow-soft));
+  transform: translateY(0) rotate(90deg);
+}
+
+.card__names,
+.card__day {
+  fill: var(--color-ink);
+  font-family: var(--font-script);
+  font-weight: 400;
+  text-anchor: middle;
+}
+
+.card__names { font-size: 136px; }
+.card__day { font-size: 86px; }
+
+/* ── Card 2: January 2027. It rides in the envelope right behind card 1 until step 5.
+ * Authored at full-zoom size so the 16th stays crisp; shrunk to card size until step 6.
+ * While it travels with card 1 it turns about its own centre: --cal-dx / --cal-dy place
+ * that centre against card 1's resting centre, in envelope widths. ── */
+.calendar {
+  --cal-dx: 0;
+  --cal-dy: -0.018;
+  --cal-rot: 90deg;
+
+  position: absolute;
+  width: calc(var(--u) * 7.8);
+  height: calc(var(--u) * 10.725);
+  left: calc(var(--W) / 2 - var(--u) * 5.9);
+  top: calc(var(--H) / 2 - var(--u) * 6.47);
+  z-index: 4;
+  box-shadow: 0 calc(var(--u) * 0.04) calc(var(--u) * 0.16) var(--color-shadow-soft);
+  transform:
+    translate(
+      calc(var(--env-w) * var(--cal-dx) + var(--u) * 2),
+      calc(var(--envelope-y) - var(--H) / 2 + var(--env-w) * var(--cal-dy) + var(--u) * 1.1075))
+    rotate(var(--cal-rot))
+    scale(var(--cal-scale, 0.107));
+}
+
+.cal__month,
+.cal__year,
+.cal__weekdays text,
+.cal__dates text {
+  fill: var(--color-ink);
+  font-family: var(--font-serif);
+  font-weight: 400;
+}
+
+.cal__month { font-size: 92px; letter-spacing: -0.01em; }
+.cal__year { font-size: 40px; text-anchor: end; }
+.cal__weekdays text { font-size: 15px; text-anchor: end; }
+
+.cal__dates text {
+  font-size: 11.5px;
+  text-anchor: end;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.cal__grid {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.4;
+  stroke-linecap: square;
+}
+
+.cal__mark { fill: var(--color-mark); }
+
+.cal__hand {
+  fill: var(--color-ink);
+  font-family: var(--font-hand);
+  font-size: 25px;
+  text-anchor: middle;
+}
+
+.doodle {
+  fill: none;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.doodle--light { stroke: var(--color-doodle); }
+.doodle--ink { stroke: var(--color-ink); }
+
+/* Hidden scribbles also go transparent: a zero-length dash still paints its round cap. */
+.scribble {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+
+/* ── Pause: tap anywhere, or Tab to it. The reel otherwise never stops (WCAG 2.2.2). ── */
+.pause {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pause:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.pause:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: -8px;
+}
+
+.pause__label {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--env-w) * 0.12);
+  padding: 0.25em 0.9em 0.3em;
+  border-radius: 999px;
+  background: var(--color-paper);
+  box-shadow: 0 0 0 1px var(--color-crease);
+  font: 400 15px / 1 var(--font-serif);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity var(--dur-reveal) var(--ease-out);
+}
+
+.pause[aria-pressed="true"] .pause__label {
+  opacity: 1;
+}
+
+/* ── The reel. main.js moves data-state along the beats in tokens.css. ──
+ * s1 closed (calendar tucked behind card 1) · s2 flap open · s3 both sheets peek
+ * s4a they clear the pocket · s4 card 1 stands, calendar under it
+ * s5 hard cut: calendar on top, tilted · s6 the 16th fills the screen · reset dissolves back to s1
+ */
+
+/* 2 · the flap lifts and drops behind the card at the halfway point */
+.stage:is([data-state="s2"], [data-state="s3"], [data-state="s4a"], [data-state="s4"], [data-state="s5"], [data-state="s6"]) .flap {
+  z-index: 3;
+  transform: perspective(var(--persp)) rotateX(180deg);
+  transition:
+    transform var(--dur-flap) var(--ease-in-out),
+    z-index 0s calc(var(--dur-flap) / 2);
+}
+
+/* 3 · the contents rise a little; the calendar slides a touch further, so a second sheet shows */
+.stage[data-state="s3"] .card {
+  transform: translateY(calc(var(--env-w) * -0.3)) rotate(90deg);
+  transition: transform var(--dur-peek) var(--ease-out);
+}
+
+.stage[data-state="s3"] .calendar {
+  --cal-dx: 0.012;
+  --cal-dy: -0.375;
+  --cal-rot: 88deg;
+  transition: transform var(--dur-peek) var(--ease-out);
+}
+
+/* 4 · both clear the pocket and come in front; card 1 turns upright with the calendar under it */
+.stage[data-state="s4a"] .card {
+  z-index: 8;
+  transform: translateY(calc(var(--env-w) * -0.75)) rotate(90deg);
+  transition:
+    transform var(--dur-lift) var(--ease-in-out),
+    z-index 0s var(--dur-lift);
+}
+
+.stage[data-state="s4a"] .calendar {
+  --cal-dx: 0.012;
+  --cal-dy: -0.825;
+  --cal-rot: 88deg;
+  z-index: 7;
+  transition:
+    transform var(--dur-lift) var(--ease-in-out),
+    z-index 0s var(--dur-lift);
+}
+
+.stage:is([data-state="s4"], [data-state="s5"], [data-state="s6"]) .card {
+  z-index: 8;
+  transform: translateY(calc(var(--env-w) * -0.26)) rotate(0deg);
+  transition: transform var(--dur-turn) var(--ease-out);
+}
+
+.stage[data-state="s4"] .calendar {
+  --cal-dx: -0.075;
+  --cal-dy: -0.272;
+  --cal-rot: -2deg;
+  z-index: 7;
+  transition: transform var(--dur-turn) var(--ease-out);
+}
+
+/* 5 · hard cut, like a stop-motion frame: no transition — the calendar is simply on top,
+ *     already at the 6_2 angle. From here it turns about the 16th for the zoom. */
+.stage:is([data-state="s5"], [data-state="s6"], [data-state="reset"]) .calendar {
+  z-index: 10;
+  transform-origin: calc(var(--u) * 5.9) calc(var(--u) * 6.47);
+}
+
+.stage[data-state="s5"] .calendar {
+  transform:
+    translate(calc(var(--env-w) * 0.1598), calc(var(--envelope-y) - var(--H) / 2 - var(--env-w) * 0.1491))
+    rotate(var(--cal-tilt))
+    scale(var(--cal-scale, 0.107));
+}
+
+/* 6 · zoom until the 16th is 53% of the screen wide */
+.stage:is([data-state="s6"], [data-state="reset"]) .calendar {
+  transform: translate(0px, 0px) rotate(var(--cal-tilt)) scale(1);
+  transition: transform var(--dur-zoom) var(--ease-zoom);
+}
+
+/* Once the zoom lands, the pen underlines "date", lifts, and stars it right beside the line. */
+.stage[data-state="s6"] .scribble {
+  --pen-down: var(--dur-zoom);
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+.stage[data-state="s6"] .scribble--underline {
+  transition:
+    stroke-dashoffset var(--dur-underline) var(--ease-out) var(--pen-down),
+    opacity 0s var(--pen-down);
+}
+
+.stage[data-state="s6"] .scribble--star {
+  --pen-down: calc(var(--dur-zoom) + var(--dur-underline) + var(--pen-lift));
+  transition:
+    stroke-dashoffset var(--dur-star) var(--ease-pen) var(--pen-down),
+    opacity 0s var(--pen-down);
+}
+
+/* Loop · the calendar dissolves onto a closed envelope that reset underneath it */
+.stage[data-state="reset"] .calendar {
+  opacity: 0;
+  transition: opacity var(--dur-dissolve) var(--ease-out);
+}
+
+.stage[data-state="reset"] .scribble,
+.stage.is-static .scribble {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+.stage.is-instant *,
+.stage.is-instant *::before,
+.stage.is-instant *::after {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage *,
+  .stage *::before,
+  .stage *::after {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
